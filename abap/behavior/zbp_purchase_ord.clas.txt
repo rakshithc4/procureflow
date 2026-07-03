@@ -1,0 +1,11 @@
+"" Object type: Behavior implementation class (empty behavior pool)
+"" Object name: ZBP_PURCHASE_ORD
+"" Create in ADT as: Class > "ZBP_PURCHASE_ORD" in package ZPROCUREMENT_WF
+"" No local handler classes are needed: ZI_PURCHASE_ORD only has a plain
+"" managed `create`, no determinations/validations/actions of its own.
+
+CLASS zbp_purchase_ord DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zi_purchase_ord.
+ENDCLASS.
+
+CLASS zbp_purchase_ord IMPLEMENTATION.
+ENDCLASS.

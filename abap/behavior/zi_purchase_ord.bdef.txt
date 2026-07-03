@@ -1,0 +1,34 @@
+"" Object type: Behavior definition (interface)
+"" Object name: ZI_PURCHASE_ORD
+"" Create in ADT as: Behavior Definition > "ZI_PURCHASE_ORD" in package ZPROCUREMENT_WF
+"" Implementation class: ZBP_PURCHASE_ORD (create as empty behavior pool, no local handlers needed)
+"" PRD ref: §7 — ord has no update/delete; rows only ever created internally via EML
+"" from ZBP_PURCHASE_REQ's CreatePurchaseOrder action. Not exposed for external
+"" create/update/delete — enforced by the read-only projection ZC_PURCHASE_ORD (T2.1).
+
+managed implementation in class zbp_purchase_ord unique;
+strict ( 2 );
+
+define behavior for ZI_PURCHASE_ORD alias PurchaseOrder
+persistent table zpurchase_ord
+lock master
+authorization : none
+{
+  create;
+
+  field ( readonly ) OrderId, CreatedAt, ChangedAt;
+
+  mapping for zpurchase_ord
+  {
+    OrderId        = order_id;
+    ReqId          = req_id;
+    VendorId       = vendor_id;
+    OrderAmount    = order_amount;
+    Currency       = currency;
+    Status         = status;
+    OrderDate      = order_date;
+    ApproverId     = approver_id;
+    CreatedAt      = created_at;
+    ChangedAt      = changed_at;
+  }
+}
