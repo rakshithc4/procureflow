@@ -1,0 +1,10 @@
+"" Object type: CDS abstract entity
+"" Object name: ZA_DECISION
+"" Create in ADT as: Data Definition > "ZA_DECISION" in package ZPROCUREMENT_WF
+"" PRD ref: §7 RAP behavior — action parameter for Approve / Reject
+
+@EndUserText.label: 'Approve/Reject decision parameter'
+define abstract entity ZA_DECISION
+{
+  note : abap.char(255);
+}

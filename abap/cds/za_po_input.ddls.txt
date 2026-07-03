@@ -1,0 +1,10 @@
+"" Object type: CDS abstract entity
+"" Object name: ZA_PO_INPUT
+"" Create in ADT as: Data Definition > "ZA_PO_INPUT" in package ZPROCUREMENT_WF
+"" PRD ref: §7 RAP behavior — action parameter for CreatePurchaseOrder
+
+@EndUserText.label: 'Create Purchase Order parameter'
+define abstract entity ZA_PO_INPUT
+{
+  vendor_id : abap.char(10);
+}
