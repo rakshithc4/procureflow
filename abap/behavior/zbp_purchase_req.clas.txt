@@ -1,0 +1,324 @@
+"" Object type: Behavior implementation class
+"" Object name: ZBP_PURCHASE_REQ
+"" Create in ADT as: Class > "ZBP_PURCHASE_REQ" in package ZPROCUREMENT_WF
+"" Prereq: message class ZPROCUREMENT_MSG (abap/ddic/zprocurement_msg.msag.txt) must exist first.
+"" PRD ref: §7 RAP behavior. EML only — never direct UPDATE dbtab.
+
+CLASS lhc_purchase_req DEFINITION INHERITING FROM cl_abap_behavior_handler.
+  PRIVATE SECTION.
+
+    CONSTANTS:
+      status_draft     TYPE char20 VALUE 'DRAFT',
+      status_submitted TYPE char20 VALUE 'SUBMITTED',
+      status_approved  TYPE char20 VALUE 'APPROVED',
+      status_rejected  TYPE char20 VALUE 'REJECTED',
+      status_created   TYPE char20 VALUE 'CREATED'.
+
+    METHODS setInitialStatus FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR purchaserequisition~setInitialStatus.
+
+    METHODS validateFields FOR VALIDATE ON SAVE
+      IMPORTING keys FOR purchaserequisition~validateFields.
+
+    METHODS submitForApproval FOR MODIFY
+      IMPORTING keys FOR ACTION purchaserequisition~SubmitForApproval RESULT result.
+
+    METHODS approve FOR MODIFY
+      IMPORTING keys FOR ACTION purchaserequisition~Approve RESULT result.
+
+    METHODS reject FOR MODIFY
+      IMPORTING keys FOR ACTION purchaserequisition~Reject RESULT result.
+
+    METHODS createPurchaseOrder FOR MODIFY
+      IMPORTING keys FOR ACTION purchaserequisition~CreatePurchaseOrder RESULT result.
+
+    METHODS get_instance_features FOR INSTANCE FEATURES
+      IMPORTING keys REQUEST requested_features FOR purchaserequisition RESULT result.
+
+ENDCLASS.
+
+CLASS lhc_purchase_req IMPLEMENTATION.
+
+  METHOD setInitialStatus.
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        UPDATE FIELDS ( Status )
+        WITH VALUE #( FOR key IN keys ( %tky   = key-%tky
+                                         Status = status_draft ) )
+      REPORTED DATA(reported_init).
+
+    reported = CORRESPONDING #( DEEP reported_init ).
+  ENDMETHOD.
+
+  METHOD validateFields.
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        FIELDS ( Amount Title )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(requisitions).
+
+    LOOP AT requisitions INTO DATA(requisition).
+      APPEND VALUE #( %tky = requisition-%tky ) TO reported-purchaserequisition.
+
+      IF requisition-Amount <= 0.
+        APPEND VALUE #( %tky = requisition-%tky ) TO failed-purchaserequisition.
+        APPEND VALUE #( %tky = requisition-%tky
+                         %state_area = 'VALIDATE_FIELDS'
+                         %msg = NEW_MESSAGE( id       = 'ZPROCUREMENT_MSG'
+                                              number   = '001'
+                                              severity = if_abap_behv_message=>severity-error )
+                         %element-amount = if_abap_boolean=>true )
+          TO reported-purchaserequisition.
+      ENDIF.
+
+      IF requisition-Title IS INITIAL.
+        APPEND VALUE #( %tky = requisition-%tky ) TO failed-purchaserequisition.
+        APPEND VALUE #( %tky = requisition-%tky
+                         %state_area = 'VALIDATE_FIELDS'
+                         %msg = NEW_MESSAGE( id       = 'ZPROCUREMENT_MSG'
+                                              number   = '002'
+                                              severity = if_abap_behv_message=>severity-error )
+                         %element-title = if_abap_boolean=>true )
+          TO reported-purchaserequisition.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD submitForApproval.
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        FIELDS ( Status )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(requisitions).
+
+    LOOP AT requisitions INTO DATA(requisition) WHERE status <> status_draft.
+      APPEND VALUE #( %tky = requisition-%tky ) TO failed-purchaserequisition.
+      APPEND VALUE #( %tky = requisition-%tky
+                       %msg = NEW_MESSAGE( id       = 'ZPROCUREMENT_MSG'
+                                            number   = '003'
+                                            severity = if_abap_behv_message=>severity-error ) )
+        TO reported-purchaserequisition.
+    ENDLOOP.
+
+    LOOP AT requisitions INTO requisition WHERE status = status_draft.
+      MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+        ENTITY purchaserequisition
+          UPDATE FIELDS ( Status ChangedAt )
+          WITH VALUE #( ( %tky       = requisition-%tky
+                           Status     = status_submitted
+                           ChangedAt  = utclong_current( ) ) )
+        REPORTED DATA(reported_submit).
+
+      reported = CORRESPONDING #( DEEP reported_submit ).
+    ENDLOOP.
+
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(updated).
+
+    result = VALUE #( FOR upd IN updated ( %tky   = upd-%tky
+                                            %param = upd ) ).
+  ENDMETHOD.
+
+  METHOD approve.
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        FIELDS ( Status )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(requisitions).
+
+    LOOP AT requisitions INTO DATA(requisition) WHERE status <> status_submitted.
+      APPEND VALUE #( %tky = requisition-%tky ) TO failed-purchaserequisition.
+      APPEND VALUE #( %tky = requisition-%tky
+                       %msg = NEW_MESSAGE( id       = 'ZPROCUREMENT_MSG'
+                                            number   = '004'
+                                            severity = if_abap_behv_message=>severity-error ) )
+        TO reported-purchaserequisition.
+    ENDLOOP.
+
+    LOOP AT keys INTO DATA(key) WHERE %param-note IS NOT INITIAL OR %param IS NOT INITIAL.
+      READ TABLE requisitions WITH KEY %tky = key-%tky INTO requisition.
+      CHECK sy-subrc = 0 AND requisition-status = status_submitted.
+
+      MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+        ENTITY purchaserequisition
+          UPDATE FIELDS ( Status ApproverId ApproverNote ChangedAt )
+          WITH VALUE #( ( %tky          = key-%tky
+                           Status        = status_approved
+                           ApproverId    = cl_abap_context_info=>get_user_technical_name( )
+                           ApproverNote  = key-%param-note
+                           ChangedAt     = utclong_current( ) ) )
+        REPORTED DATA(reported_approve).
+
+      reported = CORRESPONDING #( DEEP reported_approve ).
+    ENDLOOP.
+
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(updated).
+
+    result = VALUE #( FOR upd IN updated ( %tky   = upd-%tky
+                                            %param = upd ) ).
+  ENDMETHOD.
+
+  METHOD reject.
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        FIELDS ( Status )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(requisitions).
+
+    LOOP AT requisitions INTO DATA(requisition) WHERE status <> status_submitted.
+      APPEND VALUE #( %tky = requisition-%tky ) TO failed-purchaserequisition.
+      APPEND VALUE #( %tky = requisition-%tky
+                       %msg = NEW_MESSAGE( id       = 'ZPROCUREMENT_MSG'
+                                            number   = '004'
+                                            severity = if_abap_behv_message=>severity-error ) )
+        TO reported-purchaserequisition.
+    ENDLOOP.
+
+    LOOP AT keys INTO DATA(key).
+      READ TABLE requisitions WITH KEY %tky = key-%tky INTO requisition.
+      CHECK sy-subrc = 0 AND requisition-status = status_submitted.
+
+      IF key-%param-note IS INITIAL.
+        APPEND VALUE #( %tky = key-%tky ) TO failed-purchaserequisition.
+        APPEND VALUE #( %tky = key-%tky
+                         %msg = NEW_MESSAGE( id       = 'ZPROCUREMENT_MSG'
+                                              number   = '005'
+                                              severity = if_abap_behv_message=>severity-error ) )
+          TO reported-purchaserequisition.
+        CONTINUE.
+      ENDIF.
+
+      MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+        ENTITY purchaserequisition
+          UPDATE FIELDS ( Status ApproverId ApproverNote ChangedAt )
+          WITH VALUE #( ( %tky          = key-%tky
+                           Status        = status_rejected
+                           ApproverId    = cl_abap_context_info=>get_user_technical_name( )
+                           ApproverNote  = key-%param-note
+                           ChangedAt     = utclong_current( ) ) )
+        REPORTED DATA(reported_reject).
+
+      reported = CORRESPONDING #( DEEP reported_reject ).
+    ENDLOOP.
+
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(updated).
+
+    result = VALUE #( FOR upd IN updated ( %tky   = upd-%tky
+                                            %param = upd ) ).
+  ENDMETHOD.
+
+  METHOD createPurchaseOrder.
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        FIELDS ( Status Amount Currency )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(requisitions)
+
+      ENTITY purchaserequisition
+        BY \_Order
+        FIELDS ( OrderId )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(existing_orders).
+
+    LOOP AT keys INTO DATA(key).
+      READ TABLE requisitions WITH KEY %tky = key-%tky INTO DATA(requisition).
+      CHECK sy-subrc = 0.
+
+      READ TABLE existing_orders WITH KEY %tky = key-%tky INTO DATA(existing).
+
+      IF requisition-status <> status_approved.
+        APPEND VALUE #( %tky = key-%tky ) TO failed-purchaserequisition.
+        APPEND VALUE #( %tky = key-%tky
+                         %msg = NEW_MESSAGE( id       = 'ZPROCUREMENT_MSG'
+                                              number   = '006'
+                                              severity = if_abap_behv_message=>severity-error ) )
+          TO reported-purchaserequisition.
+        CONTINUE.
+      ENDIF.
+
+      IF sy-subrc = 0 AND existing IS NOT INITIAL.
+        APPEND VALUE #( %tky = key-%tky ) TO failed-purchaserequisition.
+        APPEND VALUE #( %tky = key-%tky
+                         %msg = NEW_MESSAGE( id       = 'ZPROCUREMENT_MSG'
+                                              number   = '007'
+                                              severity = if_abap_behv_message=>severity-error ) )
+          TO reported-purchaserequisition.
+        CONTINUE.
+      ENDIF.
+
+      MODIFY ENTITIES OF zi_purchase_ord IN LOCAL MODE
+        ENTITY purchaseorder
+          CREATE FIELDS ( ReqId VendorId OrderAmount Currency Status OrderDate )
+          WITH VALUE #( ( %cid          = 'NEWPO'
+                           ReqId         = key-%tky-ReqId
+                           VendorId      = key-%param-vendor_id
+                           OrderAmount   = requisition-Amount
+                           Currency      = requisition-Currency
+                           Status        = status_created
+                           OrderDate     = cl_abap_context_info=>get_system_date( ) ) )
+        MAPPED DATA(mapped_po)
+        REPORTED DATA(reported_po).
+
+      reported-purchaseorder = CORRESPONDING #( DEEP reported_po-purchaseorder ).
+    ENDLOOP.
+
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(updated).
+
+    result = VALUE #( FOR upd IN updated ( %tky   = upd-%tky
+                                            %param = upd ) ).
+  ENDMETHOD.
+
+  METHOD get_instance_features.
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        FIELDS ( Status )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(requisitions)
+
+      ENTITY purchaserequisition
+        BY \_Order
+        FIELDS ( OrderId )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(existing_orders).
+
+    result = VALUE #( FOR requisition IN requisitions
+      ( %tky                            = requisition-%tky
+        %features-%action-SubmitForApproval    = COND #( WHEN requisition-status = status_draft
+                                                           THEN if_abap_behv=>fc-o-enabled
+                                                           ELSE if_abap_behv=>fc-o-disabled )
+        %features-%action-Approve              = COND #( WHEN requisition-status = status_submitted
+                                                           THEN if_abap_behv=>fc-o-enabled
+                                                           ELSE if_abap_behv=>fc-o-disabled )
+        %features-%action-Reject               = COND #( WHEN requisition-status = status_submitted
+                                                           THEN if_abap_behv=>fc-o-enabled
+                                                           ELSE if_abap_behv=>fc-o-disabled )
+        %features-%action-CreatePurchaseOrder  = COND #( WHEN requisition-status = status_approved
+                                                          AND NOT line_exists( existing_orders[ %tky = requisition-%tky ] )
+                                                           THEN if_abap_behv=>fc-o-enabled
+                                                           ELSE if_abap_behv=>fc-o-disabled )
+        %update                                = COND #( WHEN requisition-status = status_draft
+                                                           THEN if_abap_behv=>fc-o-enabled
+                                                           ELSE if_abap_behv=>fc-o-disabled )
+        %delete                                = COND #( WHEN requisition-status = status_draft
+                                                           THEN if_abap_behv=>fc-o-enabled
+                                                           ELSE if_abap_behv=>fc-o-disabled ) ) ).
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS zbp_purchase_req DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zi_purchase_req.
+ENDCLASS.
+
+CLASS zbp_purchase_req IMPLEMENTATION.
+ENDCLASS.

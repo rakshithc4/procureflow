@@ -1,0 +1,46 @@
+"" Object type: Behavior definition (interface)
+"" Object name: ZI_PURCHASE_REQ
+"" Create in ADT as: Behavior Definition > "ZI_PURCHASE_REQ" in package ZPROCUREMENT_WF
+"" Implementation class: ZBP_PURCHASE_REQ (abap/behavior/zbp_purchase_req.clas.txt)
+"" PRD ref: §7 RAP behavior; authorization out of scope for v1 (PRD §3 non-goals).
+
+managed implementation in class zbp_purchase_req unique;
+strict ( 2 );
+
+define behavior for ZI_PURCHASE_REQ alias PurchaseRequisition
+persistent table zpurchase_req
+lock master
+authorization : none
+etag master ChangedAt
+{
+  create;
+  update ( features : instance );
+  delete ( features : instance );
+
+  field ( readonly ) ReqId, CreatedAt, ChangedAt;
+
+  action ( features : instance ) SubmitForApproval result [1] $self;
+  action ( features : instance ) Approve parameter ZA_DECISION result [1] $self;
+  action ( features : instance ) Reject parameter ZA_DECISION result [1] $self;
+  action ( features : instance ) CreatePurchaseOrder parameter ZA_PO_INPUT result [1] $self;
+
+  determination setInitialStatus on modify { create; }
+  validation validateFields on save { create; update; }
+
+  association _Order;
+
+  mapping for zpurchase_req
+  {
+    ReqId          = req_id;
+    Title          = title;
+    Description    = description;
+    Amount         = amount;
+    Currency       = currency;
+    Status         = status;
+    RequestorId    = requestor_id;
+    ApproverId     = approver_id;
+    ApproverNote   = approver_note;
+    CreatedAt      = created_at;
+    ChangedAt      = changed_at;
+  }
+}
