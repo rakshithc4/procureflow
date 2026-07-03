@@ -1,0 +1,16 @@
+"" Object type: Message class (T100) — created via ADT wizard, not raw source paste
+"" Object name: ZPROCUREMENT_MSG
+"" Create in ADT as: right-click package ZPROCUREMENT_WF > New > Other ABAP Repository
+"" Object > Message Class > "ZPROCUREMENT_MSG", then add these messages
+"" (Number / Message text — self-explanatory text, no placeholders needed):
+""
+"" 001  Amount must be greater than zero
+"" 002  Title is required
+"" 003  Only DRAFT requisitions can be submitted for approval
+"" 004  Only SUBMITTED requisitions can be approved or rejected
+"" 005  A note is required when rejecting a requisition
+"" 006  A purchase order can only be created from an APPROVED requisition
+"" 007  A purchase order already exists for this requisition
+""
+"" Used from ZBP_PURCHASE_REQ via NEW_MESSAGE( id = 'ZPROCUREMENT_MSG' number = '00X' ... ).
+"" Create this object BEFORE activating ZBP_PURCHASE_REQ (see MANIFEST.md order).
