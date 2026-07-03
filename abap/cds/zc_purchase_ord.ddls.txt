@@ -1,0 +1,23 @@
+"" Object type: CDS projection view (consumption)
+"" Object name: ZC_PURCHASE_ORD
+"" Create in ADT as: Data Definition > "ZC_PURCHASE_ORD" in package ZPROCUREMENT_WF
+"" Read-only: no behavior definition needed (no create/update/delete/actions projected).
+
+@AbapCatalog.sqlViewName: 'ZCPURCHASEORD'
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Purchase Order'
+@ObjectModel.readOnly: true
+define root view entity ZC_PURCHASE_ORD
+  as projection on ZI_PURCHASE_ORD
+{
+  key OrderId,
+      ReqId,
+      VendorId,
+      OrderAmount,
+      Currency,
+      Status,
+      OrderDate,
+      ApproverId,
+      CreatedAt,
+      ChangedAt
+}
