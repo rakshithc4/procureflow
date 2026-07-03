@@ -1,0 +1,238 @@
+"" Object type: ABAP Unit test class
+"" Object name: ZTC_PROCUREMENT
+"" Create in ADT as: Class > "ZTC_PROCUREMENT" in package ZPROCUREMENT_WF
+"" 6 cases, state + failure paths, EML asserts.
+
+CLASS ztc_procurement DEFINITION PUBLIC FOR TESTING
+  RISK LEVEL HARMLESS DURATION SHORT.
+
+  PRIVATE SECTION.
+    CLASS-DATA:
+      cds_test_environment TYPE REF TO if_cds_test_environment.
+
+    DATA:
+      requisition_id TYPE sysuuid_x16.
+
+    CLASS-METHODS: class_setup.
+    CLASS-METHODS: class_teardown.
+
+    METHODS: setup.
+
+    METHODS:
+      create_sets_status_draft         FOR TESTING,
+      submit_draft_to_submitted        FOR TESTING,
+      submit_submitted_fails           FOR TESTING,
+      reject_without_note_fails        FOR TESTING,
+      approve_sets_status_approved     FOR TESTING,
+      create_po_on_approved            FOR TESTING.
+
+    METHODS create_draft_requisition
+      RETURNING VALUE(req_id) TYPE sysuuid_x16.
+
+ENDCLASS.
+
+
+CLASS ztc_procurement IMPLEMENTATION.
+
+  METHOD class_setup.
+    cds_test_environment = cl_cds_test_environment=>create( i_for_entity = 'ZI_PURCHASE_REQ' ).
+  ENDMETHOD.
+
+  METHOD class_teardown.
+    cds_test_environment->destroy( ).
+  ENDMETHOD.
+
+  METHOD setup.
+    cds_test_environment->clear_doubles( ).
+  ENDMETHOD.
+
+  METHOD create_draft_requisition.
+    DATA(unique_title) = |Test PR { cl_system_uuid=>create_uuid_x16_static( ) }|.
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        CREATE FIELDS ( Title Description Amount Currency )
+        WITH VALUE #( ( %cid        = 'CREATE1'
+                         Title       = unique_title
+                         Description = 'Unit test requisition'
+                         Amount      = '100.00'
+                         Currency    = 'EUR' ) )
+      MAPPED DATA(mapped)
+      FAILED DATA(failed)
+      REPORTED DATA(reported).
+
+    req_id = mapped-purchaserequisition[ 1 ]-ReqId.
+  ENDMETHOD.
+
+  METHOD create_sets_status_draft.
+    DATA(req_id) = create_draft_requisition( ).
+
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        FIELDS ( Status )
+        WITH VALUE #( ( ReqId = req_id ) )
+      RESULT DATA(result).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = result[ 1 ]-Status
+      exp = 'DRAFT'
+      msg = 'New requisition must start in DRAFT status' ).
+  ENDMETHOD.
+
+  METHOD submit_draft_to_submitted.
+    DATA(req_id) = create_draft_requisition( ).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE SubmitForApproval
+        FROM VALUE #( ( ReqId = req_id ) )
+      FAILED DATA(failed)
+      REPORTED DATA(reported).
+
+    cl_abap_unit_assert=>assert_initial(
+      act = failed-purchaserequisition
+      msg = 'Submitting a DRAFT requisition must not fail' ).
+
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        FIELDS ( Status )
+        WITH VALUE #( ( ReqId = req_id ) )
+      RESULT DATA(result).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = result[ 1 ]-Status
+      exp = 'SUBMITTED'
+      msg = 'Submitted requisition must move to SUBMITTED status' ).
+  ENDMETHOD.
+
+  METHOD submit_submitted_fails.
+    DATA(req_id) = create_draft_requisition( ).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE SubmitForApproval
+        FROM VALUE #( ( ReqId = req_id ) )
+      FAILED DATA(failed_first)
+      REPORTED DATA(reported_first).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE SubmitForApproval
+        FROM VALUE #( ( ReqId = req_id ) )
+      FAILED DATA(failed_second)
+      REPORTED DATA(reported_second).
+
+    cl_abap_unit_assert=>assert_not_initial(
+      act = failed_second-purchaserequisition
+      msg = 'Submitting an already-SUBMITTED requisition must fail' ).
+  ENDMETHOD.
+
+  METHOD reject_without_note_fails.
+    DATA(req_id) = create_draft_requisition( ).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE SubmitForApproval
+        FROM VALUE #( ( ReqId = req_id ) )
+      FAILED DATA(failed_submit)
+      REPORTED DATA(reported_submit).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE Reject
+        FROM VALUE #( ( ReqId = req_id %param-note = '' ) )
+      FAILED DATA(failed_reject)
+      REPORTED DATA(reported_reject).
+
+    cl_abap_unit_assert=>assert_not_initial(
+      act = failed_reject-purchaserequisition
+      msg = 'Rejecting without a note must fail' ).
+  ENDMETHOD.
+
+  METHOD approve_sets_status_approved.
+    DATA(req_id) = create_draft_requisition( ).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE SubmitForApproval
+        FROM VALUE #( ( ReqId = req_id ) )
+      FAILED DATA(failed_submit)
+      REPORTED DATA(reported_submit).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE Approve
+        FROM VALUE #( ( ReqId = req_id %param-note = 'Looks good' ) )
+      FAILED DATA(failed_approve)
+      REPORTED DATA(reported_approve).
+
+    cl_abap_unit_assert=>assert_initial(
+      act = failed_approve-purchaserequisition
+      msg = 'Approving a SUBMITTED requisition must not fail' ).
+
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        FIELDS ( Status )
+        WITH VALUE #( ( ReqId = req_id ) )
+      RESULT DATA(result).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = result[ 1 ]-Status
+      exp = 'APPROVED'
+      msg = 'Approved requisition must move to APPROVED status' ).
+  ENDMETHOD.
+
+  METHOD create_po_on_approved.
+    DATA(req_id) = create_draft_requisition( ).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE SubmitForApproval
+        FROM VALUE #( ( ReqId = req_id ) )
+      FAILED DATA(failed_submit)
+      REPORTED DATA(reported_submit).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE Approve
+        FROM VALUE #( ( ReqId = req_id %param-note = 'Looks good' ) )
+      FAILED DATA(failed_approve)
+      REPORTED DATA(reported_approve).
+
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE CreatePurchaseOrder
+        FROM VALUE #( ( ReqId = req_id %param-vendor_id = 'V001' ) )
+      FAILED DATA(failed_po_first)
+      REPORTED DATA(reported_po_first).
+
+    cl_abap_unit_assert=>assert_initial(
+      act = failed_po_first-purchaserequisition
+      msg = 'Creating a PO on an APPROVED requisition without an existing PO must not fail' ).
+
+    READ ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        BY \_Order
+        FIELDS ( OrderId )
+        WITH VALUE #( ( ReqId = req_id ) )
+      RESULT DATA(orders).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( orders )
+      exp = 1
+      msg = 'Exactly one purchase order row must exist after CreatePurchaseOrder' ).
+
+    " Second call must fail: PO already exists for this requisition
+    MODIFY ENTITIES OF zi_purchase_req IN LOCAL MODE
+      ENTITY purchaserequisition
+        EXECUTE CreatePurchaseOrder
+        FROM VALUE #( ( ReqId = req_id %param-vendor_id = 'V002' ) )
+      FAILED DATA(failed_po_second)
+      REPORTED DATA(reported_po_second).
+
+    cl_abap_unit_assert=>assert_not_initial(
+      act = failed_po_second-purchaserequisition
+      msg = 'A second CreatePurchaseOrder on the same requisition must fail' ).
+  ENDMETHOD.
+
+ENDCLASS.
