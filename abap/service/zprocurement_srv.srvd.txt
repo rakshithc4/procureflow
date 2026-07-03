@@ -1,0 +1,11 @@
+"" Object type: Service definition
+"" Object name: ZPROCUREMENT_SRV
+"" Create in ADT as: Service Definition > "ZPROCUREMENT_SRV" in package ZPROCUREMENT_WF
+"" PRD ref: §8 API contract. After activation, create Service Binding
+"" "ZUI_PROCUREMENT_O4" (OData V4 - UI) on this definition — see T2.2 (manual, docs/PHASE2_VERIFIED.md).
+
+@EndUserText.label: 'Procurement workflow service'
+define service ZPROCUREMENT_SRV {
+  expose ZC_PURCHASE_REQ as PurchaseRequisition;
+  expose ZC_PURCHASE_ORD as PurchaseOrder;
+}
