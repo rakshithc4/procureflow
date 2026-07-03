@@ -1,0 +1,26 @@
+"" Object type: Database table (source-code-based definition)
+"" Object name: ZPURCHASE_REQ
+"" Create in ADT as: Database Table > "ZPURCHASE_REQ" in package ZPROCUREMENT_WF
+"" PRD ref: §7 table ZPURCHASE_REQ
+
+@EndUserText.label : 'Purchase Requisition'
+@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory : #TRANSPARENT
+@AbapCatalog.deliveryClass : #A
+@AbapCatalog.dataMaintenance : #RESTRICTED
+define table zpurchase_req {
+
+  key client       : abap.clnt not null;
+  key req_id       : sysuuid_x16 not null;
+  title            : abap.char(100);
+  description      : abap.char(255);
+  amount           : abap.dec(13,2);
+  currency         : abap.cuky;
+  status           : abap.char(20);
+  requestor_id     : abap.char(12);
+  approver_id      : abap.char(12);
+  approver_note    : abap.char(255);
+  created_at       : timestampl;
+  changed_at       : timestampl;
+
+}
