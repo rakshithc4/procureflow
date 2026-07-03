@@ -1,0 +1,21 @@
+"" Object type: Behavior definition (projection)
+"" Object name: ZC_PURCHASE_REQ
+"" Create in ADT as: Behavior Definition > "ZC_PURCHASE_REQ" in package ZPROCUREMENT_WF
+"" Projects the ZI_PURCHASE_REQ interface behavior for external OData consumption.
+
+projection;
+strict ( 2 );
+
+define behavior for ZC_PURCHASE_REQ alias PurchaseRequisition
+{
+  use create;
+  use update;
+  use delete;
+
+  use action SubmitForApproval;
+  use action Approve;
+  use action Reject;
+  use action CreatePurchaseOrder;
+
+  use association _Order { create; }
+}

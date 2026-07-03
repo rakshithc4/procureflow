@@ -1,0 +1,29 @@
+"" Object type: CDS projection view (consumption, transactional)
+"" Object name: ZC_PURCHASE_REQ
+"" Create in ADT as: Data Definition > "ZC_PURCHASE_REQ" in package ZPROCUREMENT_WF
+"" Behavior: abap/behavior/zc_purchase_req.bdef.txt (projects the interface behavior)
+"" Prereq: ZC_PURCHASE_ORD must already be active.
+
+@AbapCatalog.sqlViewName: 'ZCPURCHASEREQ'
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Purchase Requisition'
+@Search.searchable: true
+define root view entity ZC_PURCHASE_REQ
+  provider contract transactional_query
+  as projection on ZI_PURCHASE_REQ
+{
+  key ReqId,
+      @Search.defaultSearchElement: true
+      Title,
+      Description,
+      Amount,
+      Currency,
+      Status,
+      RequestorId,
+      ApproverId,
+      ApproverNote,
+      CreatedAt,
+      ChangedAt,
+
+      _Order : redirected to ZC_PURCHASE_ORD
+}

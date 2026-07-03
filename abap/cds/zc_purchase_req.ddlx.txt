@@ -1,0 +1,56 @@
+"" Object type: Metadata extension
+"" Object name: ZC_PURCHASE_REQ (ddlx)
+"" Create in ADT as: Metadata Extension > "ZC_PURCHASE_REQ" in package ZPROCUREMENT_WF,
+"" extending data definition ZC_PURCHASE_REQ.
+"" Purpose: Fiori Elements preview = free admin UI (PRD §9 note under T2.1).
+"" NOTE: action-button annotation syntax (@UI.lineItem type: #FOR_ACTION) varies slightly
+"" by BTP version — use ADT content-assist (Ctrl+Space) inside the annotate block to
+"" confirm/complete if activation reports an annotation error; the field-level
+"" annotations below are stable across versions.
+
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName: 'Purchase Requisition',
+    typeNamePlural: 'Purchase Requisitions',
+    title: { type: #STANDARD, value: 'Title' }
+  }
+}
+
+annotate entity ZC_PURCHASE_REQ with
+{
+  @UI.facet: [
+    { id: 'GeneralInfo', purpose: #STANDARD, type: #IDENTIFICATION_REFERENCE, label: 'General Information', position: 10 },
+    { id: 'Order', purpose: #STANDARD, type: #LINEITEM_REFERENCE, label: 'Purchase Order', targetElement: '_Order', position: 20 }
+  ]
+
+  @UI.lineItem: [ { position: 10, label: 'Title' } ]
+  @UI.identification: [ { position: 10 } ]
+  Title;
+
+  @UI.identification: [ { position: 20 } ]
+  Description;
+
+  @UI.lineItem: [ { position: 20, label: 'Amount' } ]
+  @UI.identification: [ { position: 30 } ]
+  Amount;
+
+  @UI.lineItem: [ { position: 30, label: 'Currency' } ]
+  Currency;
+
+  @UI.lineItem: [ { position: 40, label: 'Status' } ]
+  @UI.identification: [ { position: 40 } ]
+  Status;
+
+  @UI.lineItem: [ { position: 50, label: 'Requestor' } ]
+  RequestorId;
+
+  @UI.identification: [ { position: 50 } ]
+  ApproverId;
+
+  @UI.identification: [ { position: 60 } ]
+  ApproverNote;
+
+  @UI.lineItem: [ { position: 60, label: 'Last changed' } ]
+  ChangedAt;
+}
