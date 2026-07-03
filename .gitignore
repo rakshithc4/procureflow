@@ -1,0 +1,18 @@
+node_modules/
+web/.next/
+web/node_modules/
+.env
+.env.local
+*.local
+.DS_Store
+web/test-results/
+web/playwright-report/
+web/coverage/
+
+# Internal planning/tooling — kept locally, not published
+CLAUDE.md
+PRD.md
+IMPLEMENTATION_PLAN.md
+DESIGN_BRIEF.md
+.claude/
+design/
