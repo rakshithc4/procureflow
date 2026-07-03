@@ -1,0 +1,36 @@
+/* Design token bridge: brand + status colors, imported by globals.css.
+   This is the single source of truth for these values — edit here. */
+
+@theme inline {
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+
+  --color-status-draft-bg: #f1f5f9;
+  --color-status-draft-fg: #334155;
+  --color-status-draft-border: #cbd5e1;
+
+  --color-status-submitted-bg: #eff6ff;
+  --color-status-submitted-fg: #1d4ed8;
+  --color-status-submitted-border: #bfdbfe;
+
+  --color-status-approved-bg: #ecfdf5;
+  --color-status-approved-fg: #047857;
+  --color-status-approved-border: #a7f3d0;
+
+  --color-status-rejected-bg: #fef2f2;
+  --color-status-rejected-fg: #b91c1c;
+  --color-status-rejected-border: #fecaca;
+
+  --color-status-poCreated-bg: #faf5ff;
+  --color-status-poCreated-fg: #7c3aed;
+  --color-status-poCreated-border: #e9d5ff;
+}
+
+/* shadcn's semantic tokens (--primary, --ring, --accent, ...) are routed onto
+   this brand palette directly in globals.css's own :root block, not here —
+   a second :root block in an earlier-imported file loses a same-specificity
+   cascade fight against globals.css's later one, regardless of @import order. */
