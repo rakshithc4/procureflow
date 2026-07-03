@@ -1,0 +1,26 @@
+"" Object type: CDS interface view (root view entity)
+"" Object name: ZI_PURCHASE_ORD
+"" Create in ADT as: Data Definition > "ZI_PURCHASE_ORD" in package ZPROCUREMENT_WF
+"" PRD ref: §7 CDS layer
+
+@AbapCatalog.sqlViewName: 'ZIPURCHASEORD'
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Purchase Order - Interface'
+@Metadata.ignorePropagatedAnnotations: true
+define root view entity ZI_PURCHASE_ORD
+  as select from zpurchase_ord
+{
+  key order_id                                    as OrderId,
+      req_id                                      as ReqId,
+      vendor_id                                   as VendorId,
+      @Semantics.amount.currencyCode: 'Currency'
+      order_amount                                as OrderAmount,
+      currency                                    as Currency,
+      status                                       as Status,
+      order_date                                   as OrderDate,
+      approver_id                                  as ApproverId,
+      @Semantics.systemDateTime.createdAt: true
+      created_at                                   as CreatedAt,
+      @Semantics.systemDateTime.lastChangedAt: true
+      changed_at                                   as ChangedAt
+}
