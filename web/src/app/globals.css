@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -49,79 +49,42 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Dark is the fixed theme (not a toggle) — deep space-navy, not flat black,
+   indigo-anchored to match the brand mark/badges. See design/README.md. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  /* Brand primary (brand.600/500 from tokens.css) — set here, not in
-     tokens.css, because a later :root block always wins a same-specificity
-     cascade fight regardless of @import order. */
-  --primary: var(--color-brand-600);
-  --primary-foreground: #ffffff;
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: var(--color-brand-50);
-  --accent-foreground: var(--color-brand-700);
-  /* Darker than the shadcn default (oklch(0.577 0.245 27.325)): the default
-     fails WCAG AA (3.81:1) for text-destructive on the bg-destructive/10
-     button background used by the destructive button variant. */
-  --destructive: oklch(0.505 0.213 27.518);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  color-scheme: dark;
+  --background: #0a0b10;
+  --foreground: #f0f1f5;
+  --card: #12141c;
+  --card-foreground: #f0f1f5;
+  --popover: #14161f;
+  --popover-foreground: #f0f1f5;
+  --primary: var(--color-brand-500);
+  --primary-foreground: #fafafa;
+  --secondary: #181b26;
+  --secondary-foreground: #f0f1f5;
+  --muted: #181b26;
+  --muted-foreground: #9195a3;
+  --accent: #1b2033;
+  --accent-foreground: var(--color-brand-200);
+  --destructive: #f87171;
+  --border: #232733;
+  --input: #232733;
   --ring: var(--color-brand-500);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.875rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --chart-1: var(--color-brand-500);
+  --chart-2: #4ade80;
+  --chart-3: #fbbf24;
+  --chart-4: #f87171;
+  --chart-5: #c084fc;
+  --radius: 1rem;
+  --sidebar: #0e0f16;
+  --sidebar-foreground: #f0f1f5;
+  --sidebar-primary: var(--color-brand-500);
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #181b26;
+  --sidebar-accent-foreground: #f0f1f5;
+  --sidebar-border: #232733;
+  --sidebar-ring: var(--color-brand-500);
 }
 
 @layer base {
@@ -133,5 +96,48 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* Ambient signature glow — slow drift, respects reduced-motion below. */
+@keyframes glow-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(2%, -3%) scale(1.05); }
+}
+
+/* Entrance stagger for cards/rows — transform+opacity only. */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Gentle attention pulse for "awaiting action" states (Submitted badge). */
+@keyframes soft-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Skeleton loading shimmer sweep. */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@layer utilities {
+  .animate-glow-drift {
+    animation: glow-drift 12s ease-in-out infinite;
+  }
+  .animate-fade-in-up {
+    animation: fade-in-up 300ms ease-out both;
+  }
+  .animate-soft-pulse {
+    animation: soft-pulse 2s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-glow-drift,
+  .animate-fade-in-up,
+  .animate-soft-pulse {
+    animation: none !important;
   }
 }

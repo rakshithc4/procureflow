@@ -5,29 +5,32 @@
   --color-brand-50: #eef2ff;
   --color-brand-100: #e0e7ff;
   --color-brand-200: #c7d2fe;
+  --color-brand-400: #818cf8;
   --color-brand-500: #6366f1;
   --color-brand-600: #4f46e5;
   --color-brand-700: #4338ca;
 
-  --color-status-draft-bg: #f1f5f9;
-  --color-status-draft-fg: #334155;
-  --color-status-draft-border: #cbd5e1;
+  /* Dark-surface-tuned: bright 400-weight text on a dark tinted pill bg —
+     the inverse of the light-mode pairing (dark text on light bg). */
+  --color-status-draft-bg: #1c1f2a;
+  --color-status-draft-fg: #a8acb8;
+  --color-status-draft-border: #2e313d;
 
-  --color-status-submitted-bg: #eff6ff;
-  --color-status-submitted-fg: #1d4ed8;
-  --color-status-submitted-border: #bfdbfe;
+  --color-status-submitted-bg: #16213d;
+  --color-status-submitted-fg: #7da6ff;
+  --color-status-submitted-border: #24365e;
 
-  --color-status-approved-bg: #ecfdf5;
-  --color-status-approved-fg: #047857;
-  --color-status-approved-border: #a7f3d0;
+  --color-status-approved-bg: #122a20;
+  --color-status-approved-fg: #4ade80;
+  --color-status-approved-border: #1c4430;
 
-  --color-status-rejected-bg: #fef2f2;
-  --color-status-rejected-fg: #b91c1c;
-  --color-status-rejected-border: #fecaca;
+  --color-status-rejected-bg: #2a1518;
+  --color-status-rejected-fg: #f87171;
+  --color-status-rejected-border: #4a2228;
 
-  --color-status-poCreated-bg: #faf5ff;
-  --color-status-poCreated-fg: #7c3aed;
-  --color-status-poCreated-border: #e9d5ff;
+  --color-status-poCreated-bg: #22163a;
+  --color-status-poCreated-fg: #c084fc;
+  --color-status-poCreated-border: #382357;
 }
 
 /* shadcn's semantic tokens (--primary, --ring, --accent, ...) are routed onto
