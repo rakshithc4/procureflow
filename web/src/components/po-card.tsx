@@ -9,21 +9,21 @@ export function PoCard({ po }: { po: PurchaseOrder }) {
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
         <div>
-          <p className="text-slate-500">Order ID</p>
+          <p className="text-muted-foreground">Order ID</p>
           <p className="font-mono text-xs">{po.OrderId}</p>
         </div>
         <div>
-          <p className="text-slate-500">Vendor</p>
+          <p className="text-muted-foreground">Vendor</p>
           <p>{po.VendorId}</p>
         </div>
         <div>
-          <p className="text-slate-500">Amount</p>
+          <p className="text-muted-foreground">Amount</p>
           <p>
             {po.OrderAmount} {po.Currency}
           </p>
         </div>
         <div>
-          <p className="text-slate-500">Order date</p>
+          <p className="text-muted-foreground">Order date</p>
           <p>{po.OrderDate}</p>
         </div>
       </CardContent>

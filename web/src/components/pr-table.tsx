@@ -22,18 +22,18 @@ export function PrTable({ data }: { data: PurchaseRequisition[] }) {
       </TableHeader>
       <TableBody>
         {data.map((pr) => (
-          <TableRow key={pr.ReqId} className="relative hover:bg-slate-50">
-            <TableCell className="font-medium text-slate-900">
+          <TableRow key={pr.ReqId} className="relative transition-colors duration-150 hover:bg-accent/50">
+            <TableCell className="font-medium text-foreground">
               <Link href={`/requisitions/${pr.ReqId}`} className="static before:absolute before:inset-0">
                 {pr.Title}
               </Link>
             </TableCell>
-            <TableCell className="tabular-nums text-slate-600">{formatAmount(pr.Amount, pr.Currency)}</TableCell>
+            <TableCell className="font-mono tabular-nums text-muted-foreground">{formatAmount(pr.Amount, pr.Currency)}</TableCell>
             <TableCell>
               <StatusBadge status={pr.Status} hasOrder={!!pr._Order} />
             </TableCell>
-            <TableCell className="text-slate-600">{pr.RequestorId}</TableCell>
-            <TableCell className="text-slate-600">{new Date(pr.ChangedAt).toLocaleString()}</TableCell>
+            <TableCell className="text-muted-foreground">{pr.RequestorId}</TableCell>
+            <TableCell className="text-muted-foreground">{new Date(pr.ChangedAt).toLocaleString()}</TableCell>
           </TableRow>
         ))}
       </TableBody>

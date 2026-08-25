@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { CheckCircle2, CircleDashed, Clock, XCircle } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { PrTable } from "@/components/pr-table";
@@ -43,10 +44,15 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className="flex items-center justify-between"
+      >
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
         <Button nativeButton={false} render={<Link href="/requisitions/new" />}>New requisition</Button>
-      </div>
+      </motion.div>
 
       {query.isLoading && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4" role="status" aria-label="Loading metrics">
@@ -60,32 +66,46 @@ export default function DashboardPage() {
 
       {query.isSuccess && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {STATUSES.map((status) => {
+          {STATUSES.map((status, i) => {
             const Icon = METRIC_ICON[status];
             return (
-              <Card key={status} className="transition-shadow hover:shadow-md">
-                <CardHeader className="flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-slate-500">{status}</CardTitle>
-                  <span
-                    className={cn(
-                      "flex size-7 items-center justify-center rounded-lg",
-                      METRIC_CLASS[status],
-                    )}
-                  >
-                    <Icon className="size-4" strokeWidth={2.25} aria-hidden="true" />
-                  </span>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-semibold tracking-tight text-slate-900">{counts[status]}</p>
-                </CardContent>
-              </Card>
+              <motion.div
+                key={status}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut", delay: i * 0.05 }}
+                whileHover={{ y: -3 }}
+              >
+                <Card className="transition-shadow duration-200 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30">
+                  <CardHeader className="flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">{status}</CardTitle>
+                    <span
+                      className={cn(
+                        "flex size-7 items-center justify-center rounded-lg",
+                        METRIC_CLASS[status],
+                      )}
+                    >
+                      <Icon className="size-4" strokeWidth={2.25} aria-hidden="true" />
+                    </span>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-mono text-3xl font-semibold tracking-tight text-foreground tabular-nums">
+                      {counts[status]}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
         </div>
       )}
 
-      <div>
-        <h2 className="mb-3 text-lg font-medium text-slate-900">Recent requisitions</h2>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut", delay: 0.15 }}
+      >
+        <h2 className="mb-3 text-lg font-medium text-foreground">Recent requisitions</h2>
         {query.isSuccess && query.data.value.length === 0 && (
           <EmptyState
             title="No requisitions yet"
@@ -94,7 +114,7 @@ export default function DashboardPage() {
           />
         )}
         {query.isSuccess && query.data.value.length > 0 && <PrTable data={query.data.value.slice(0, 5)} />}
-      </div>
+      </motion.div>
     </div>
   );
 }

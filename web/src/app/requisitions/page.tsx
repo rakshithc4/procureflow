@@ -33,7 +33,7 @@ export default function RequisitionsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-900">Requisitions</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Requisitions</h1>
         <Button nativeButton={false} render={<Link href="/requisitions/new" />}>New requisition</Button>
       </div>
 
@@ -46,10 +46,10 @@ export default function RequisitionsPage() {
               onClick={() => setStatus(chip.value)}
               aria-pressed={status === chip.value}
               className={cn(
-                "rounded-full border px-3 py-1 text-sm",
+                "rounded-full border px-3 py-1 text-sm font-medium transition-colors duration-150",
                 status === chip.value
-                  ? "border-brand-600 bg-brand-50 text-brand-700"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50",
+                  ? "border-primary/50 bg-primary/15 text-primary"
+                  : "border-border text-muted-foreground hover:bg-accent hover:text-foreground",
               )}
             >
               {chip.label}

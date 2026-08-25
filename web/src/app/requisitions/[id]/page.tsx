@@ -113,8 +113,8 @@ export default function RequisitionDetailPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">{pr.Title}</h1>
-          <p className="mt-1 text-sm text-slate-500">Requested by {pr.RequestorId}</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{pr.Title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Requested by {pr.RequestorId}</p>
         </div>
         <StatusBadge status={pr.Status} hasOrder={hasOrder} />
       </div>
@@ -135,21 +135,21 @@ export default function RequisitionDetailPage() {
       <Card>
         <CardContent className="grid grid-cols-1 gap-4 pt-6 text-sm sm:grid-cols-2">
           <div>
-            <p className="text-slate-500">Description</p>
+            <p className="text-muted-foreground">Description</p>
             <p>{pr.Description || "—"}</p>
           </div>
           <div>
-            <p className="text-slate-500">Amount</p>
+            <p className="text-muted-foreground">Amount</p>
             <p>
               {pr.Amount} {pr.Currency}
             </p>
           </div>
           <div>
-            <p className="text-slate-500">Approver</p>
+            <p className="text-muted-foreground">Approver</p>
             <p>{pr.ApproverId ?? "—"}</p>
           </div>
           <div>
-            <p className="text-slate-500">Approver note</p>
+            <p className="text-muted-foreground">Approver note</p>
             <p>{pr.ApproverNote ?? "—"}</p>
           </div>
         </CardContent>

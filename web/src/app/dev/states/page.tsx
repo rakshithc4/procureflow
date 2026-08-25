@@ -15,7 +15,7 @@ export default function DevStatesPage() {
 
   return (
     <div className="flex flex-col gap-10">
-      <h1 className="text-2xl font-semibold text-slate-900">Component states (dev only)</h1>
+      <h1 className="text-2xl font-semibold text-foreground">Component states (dev only)</h1>
 
       <section>
         <h2 className="mb-3 text-lg font-medium">Status badges</h2>

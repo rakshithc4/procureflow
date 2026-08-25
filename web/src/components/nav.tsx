@@ -32,14 +32,14 @@ export function Nav() {
   const links = role === "approver" ? [...LINKS, { href: "/approvals", label: "Approvals" }] : LINKS;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-brand-600 text-white shadow-sm shadow-brand-600/30">
+          <Link href="/" className="group flex items-center gap-2">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm shadow-primary/40 transition-transform duration-200 group-hover:scale-105">
               <Package className="size-4" strokeWidth={2.25} aria-hidden="true" />
             </span>
-            <span className="font-heading text-[15px] font-semibold tracking-tight text-slate-900">
+            <span className="font-heading text-[15px] font-semibold tracking-tight text-foreground">
               ProcureFlow
             </span>
           </Link>
@@ -49,8 +49,8 @@ export function Nav() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900",
-                  pathname === link.href && "bg-brand-50 text-brand-700 hover:bg-brand-50 hover:text-brand-700",
+                  "rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:bg-accent hover:text-foreground",
+                  pathname === link.href && "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary",
                 )}
               >
                 {link.label}
@@ -60,12 +60,12 @@ export function Nav() {
         </div>
         {session && (
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <span className="flex size-7 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span className="flex size-7 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">
                 {initials(session.user?.name)}
               </span>
               <span className="hidden sm:inline">
-                {session.user?.name} <span className="text-slate-400">·</span> {role}
+                {session.user?.name} <span className="text-muted-foreground/50">·</span> {role}
               </span>
             </div>
             <Button variant="outline" size="sm" onClick={() => signOut({ callbackUrl: "/login" })}>

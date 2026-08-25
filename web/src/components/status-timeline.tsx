@@ -19,16 +19,21 @@ export function StatusTimeline({ status, hasOrder }: { status: Status; hasOrder:
           <span className="flex items-center gap-2">
             <span
               className={cn(
-                "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium",
-                i <= active ? "bg-brand-600 text-white" : "bg-slate-200 text-slate-500",
+                "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors duration-300",
+                i <= active ? "bg-primary text-primary-foreground shadow-sm shadow-primary/40" : "bg-muted text-muted-foreground",
               )}
               aria-current={i === active ? "step" : undefined}
             >
               {i + 1}
             </span>
-            <span className={cn("text-sm", i <= active ? "text-slate-900" : "text-slate-600")}>{step}</span>
+            <span className={cn("text-sm", i <= active ? "font-medium text-foreground" : "text-muted-foreground")}>{step}</span>
           </span>
-          {i < STEPS.length - 1 && <span className="mx-3 h-px w-8 bg-slate-200" aria-hidden="true" />}
+          {i < STEPS.length - 1 && (
+            <span
+              className={cn("mx-3 h-px w-8 transition-colors duration-300", i < active ? "bg-primary/50" : "bg-border")}
+              aria-hidden="true"
+            />
+          )}
         </li>
       ))}
     </ol>

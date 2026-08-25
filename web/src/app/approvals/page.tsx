@@ -41,7 +41,7 @@ export default function ApprovalsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold text-slate-900">Approvals</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-foreground">Approvals</h1>
 
       {query.isLoading && (
         <div className="flex flex-col gap-2" role="status" aria-label="Loading approvals">
@@ -71,16 +71,18 @@ export default function ApprovalsPage() {
           <TableBody>
             {query.data.value.map((pr) => (
               <TableRow key={pr.ReqId}>
-                <TableCell className="font-medium text-slate-900">
-                  <Link href={`/requisitions/${pr.ReqId}`}>{pr.Title}</Link>
+                <TableCell className="font-medium text-foreground">
+                  <Link href={`/requisitions/${pr.ReqId}`} className="transition-colors hover:text-primary">
+                    {pr.Title}
+                  </Link>
                 </TableCell>
-                <TableCell className="tabular-nums text-slate-600">
+                <TableCell className="font-mono tabular-nums text-muted-foreground">
                   {pr.Amount} {pr.Currency}
                 </TableCell>
                 <TableCell>
                   <StatusBadge status={pr.Status} />
                 </TableCell>
-                <TableCell className="text-slate-600">{pr.RequestorId}</TableCell>
+                <TableCell className="text-muted-foreground">{pr.RequestorId}</TableCell>
                 <TableCell className="flex justify-end gap-2">
                   <Button
                     size="sm"

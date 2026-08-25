@@ -11,11 +11,11 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-slate-200 py-16 text-center">
-      <Inbox className="size-8 text-slate-400" aria-hidden="true" />
+    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border py-16 text-center">
+      <Inbox className="size-8 text-muted-foreground/60" aria-hidden="true" />
       <div>
-        <p className="font-medium text-slate-900">{title}</p>
-        <p className="text-sm text-slate-500">{description}</p>
+        <p className="font-medium text-foreground">{title}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
       {action}
     </div>

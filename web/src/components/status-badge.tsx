@@ -24,11 +24,11 @@ export function StatusBadge({ status, hasOrder = false }: { status: Status; hasO
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold tracking-wide shadow-[0_0_0_1px_rgba(0,0,0,0)] transition-all duration-200 hover:shadow-[0_0_16px_-4px_currentColor]",
         CLASS[intent],
       )}
     >
-      <Icon className="size-3.5" aria-hidden="true" />
+      <Icon className={cn("size-3.5", intent === "submitted" && "animate-soft-pulse")} aria-hidden="true" />
       {STATUS_LABEL[intent]}
     </span>
   );
