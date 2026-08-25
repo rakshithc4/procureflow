@@ -1,8 +1,3 @@
-"" Object type: Database table (source-code-based definition)
-"" Object name: ZPURCHASE_ORD
-"" Create in ADT as: Database Table > "ZPURCHASE_ORD" in package ZPROCUREMENT_WF
-"" PRD ref: §7 table ZPURCHASE_ORD
-
 @EndUserText.label : 'Purchase Order'
 @AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
 @AbapCatalog.tableCategory : #TRANSPARENT

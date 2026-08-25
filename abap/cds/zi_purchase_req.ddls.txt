@@ -1,9 +1,3 @@
-"" Object type: CDS interface view (root view entity)
-"" Object name: ZI_PURCHASE_REQ
-"" Create in ADT as: Data Definition > "ZI_PURCHASE_REQ" in package ZPROCUREMENT_WF
-"" PRD ref: §7 CDS layer; association _Order [0..1] to ZI_PURCHASE_ORD
-"" Prereq: ZI_PURCHASE_ORD must already be active.
-
 @AbapCatalog.sqlViewName: 'ZIPURCHASEREQ'
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Purchase Requisition - Interface'

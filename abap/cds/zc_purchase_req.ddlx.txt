@@ -1,13 +1,3 @@
-"" Object type: Metadata extension
-"" Object name: ZC_PURCHASE_REQ (ddlx)
-"" Create in ADT as: Metadata Extension > "ZC_PURCHASE_REQ" in package ZPROCUREMENT_WF,
-"" extending data definition ZC_PURCHASE_REQ.
-"" Purpose: Fiori Elements preview = free admin UI (PRD §9 note under T2.1).
-"" NOTE: action-button annotation syntax (@UI.lineItem type: #FOR_ACTION) varies slightly
-"" by BTP version — use ADT content-assist (Ctrl+Space) inside the annotate block to
-"" confirm/complete if activation reports an annotation error; the field-level
-"" annotations below are stable across versions.
-
 @Metadata.layer: #CORE
 @UI: {
   headerInfo: {
