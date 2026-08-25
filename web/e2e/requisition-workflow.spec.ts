@@ -40,7 +40,7 @@ test.describe("US1-US4 — golden path", () => {
 
     page.once("dialog", (dialog) => dialog.accept());
     await page.getByRole("button", { name: "Submit for Approval" }).click();
-    await expect(page.getByText("Submitted", { exact: true })).toBeVisible();
+    await expect(page.getByTestId("status-badge")).toHaveText(/Submitted/);
 
     await page.getByRole("button", { name: "Approve", exact: true }).click();
     const approveDialog = page.getByRole("dialog");

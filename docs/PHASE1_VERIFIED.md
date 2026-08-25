@@ -1,8 +1,24 @@
 # Phase 1 verification — ABAP backend
 
-**Status: PENDING.** Not yet verified — object creation/activation in ADT
-has to happen manually against a live BTP tenant. Fill this in after
-completing the steps below.
+**Status: FUNCTIONALLY VERIFIED, paperwork incomplete.** All 18 objects were
+created and activated in ADT. ABAP Unit confirmed 6/6 green (screenshot
+reviewed live in a Claude Code session, ~2026-07-07 01:38 local time —
+`ztc_procurement`, all methods passing, durations 0.19s–1.35s). The
+screenshot itself was never saved into this repo (hit a sandbox file-access
+issue mid-session) — if you still have it, drop it in `docs/screenshots/`
+and reference it below.
+
+ATC came back with: 2 errors (1 in `ZCL_DIAG_CREATE`, an object outside this
+repo — not something to fix here; 1 in `ZTC_PROCUREMENT` ~line 55, an
+unhandled-exception warning near `cl_system_uuid=>create_uuid_x16_static( )`
+— the full message text was never captured, still needs a look), 1 warning
+("no test relation" — expected/normal for an integration-style RAP test
+class, not a real issue), 21 infos (expected EML/RAP boilerplate noise, not
+real issues).
+
+**Before trusting this is "done"**: re-run ATC, get the full text of that
+one CX_UUID_ finding, decide if it needs a fix, and paste real output below
+so this stops being secondhand.
 
 ## What's done
 All ABAP source authored in [`abap/`](../abap/) per [`abap/MANIFEST.md`](../abap/MANIFEST.md):

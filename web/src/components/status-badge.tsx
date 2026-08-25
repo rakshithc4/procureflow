@@ -23,6 +23,7 @@ export function StatusBadge({ status, hasOrder = false }: { status: Status; hasO
   const Icon = ICON[intent];
   return (
     <span
+      data-testid="status-badge"
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold tracking-wide shadow-[0_0_0_1px_rgba(0,0,0,0)] transition-all duration-200 hover:shadow-[0_0_16px_-4px_currentColor]",
         CLASS[intent],
