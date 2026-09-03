@@ -11,6 +11,7 @@ import { ErrorState } from "@/components/error-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 import { STATUSES, type Status } from "@/lib/pr";
 import { cn } from "@/lib/utils";
 
@@ -90,7 +91,7 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="font-mono text-3xl font-semibold tracking-tight text-foreground tabular-nums">
-                      {counts[status]}
+                      <AnimatedNumber value={counts[status]} />
                     </p>
                   </CardContent>
                 </Card>

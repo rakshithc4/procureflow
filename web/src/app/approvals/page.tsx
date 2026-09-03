@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 
 // US5 AC1: approver-only queue of SUBMITTED requisitions with one-click actions.
 export default function ApprovalsPage() {
@@ -41,7 +42,14 @@ export default function ApprovalsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight text-foreground">Approvals</h1>
+      <div className="flex items-baseline gap-2">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Approvals</h1>
+        {query.isSuccess && query.data.value.length > 0 && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-status-submitted-bg px-2.5 py-0.5 font-mono text-xs tabular-nums text-status-submitted-fg">
+            <AnimatedNumber value={query.data.value.length} /> pending
+          </span>
+        )}
+      </div>
 
       {query.isLoading && (
         <div className="flex flex-col gap-2" role="status" aria-label="Loading approvals">

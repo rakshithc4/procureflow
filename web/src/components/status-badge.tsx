@@ -1,6 +1,7 @@
 import { CheckCircle2, CircleDashed, Clock, PackageCheck, XCircle } from "lucide-react";
 import { STATUS_LABEL, statusIntent, type Status, type StatusIntent } from "@/lib/pr";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ICON: Record<StatusIntent, typeof CircleDashed> = {
   draft: CircleDashed,
@@ -18,19 +19,34 @@ const CLASS: Record<StatusIntent, string> = {
   poCreated: "bg-status-poCreated-bg text-status-poCreated-fg border-status-poCreated-border",
 };
 
+const DESCRIPTION: Record<StatusIntent, string> = {
+  draft: "Not yet submitted for approval.",
+  submitted: "Awaiting an approver's decision.",
+  approved: "Approved — ready for a purchase order.",
+  rejected: "Rejected by the approver.",
+  poCreated: "Approved and converted to a purchase order.",
+};
+
 export function StatusBadge({ status, hasOrder = false }: { status: Status; hasOrder?: boolean }) {
   const intent = statusIntent(status, hasOrder);
   const Icon = ICON[intent];
   return (
-    <span
-      data-testid="status-badge"
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold tracking-wide shadow-[0_0_0_1px_rgba(0,0,0,0)] transition-all duration-200 hover:shadow-[0_0_16px_-4px_currentColor]",
-        CLASS[intent],
-      )}
-    >
-      <Icon className={cn("size-3.5", intent === "submitted" && "animate-soft-pulse")} aria-hidden="true" />
-      {STATUS_LABEL[intent]}
-    </span>
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <span
+            data-testid="status-badge"
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold tracking-wide shadow-[0_0_0_1px_rgba(0,0,0,0)] transition-all duration-200 hover:shadow-[0_0_16px_-4px_currentColor]",
+              CLASS[intent],
+            )}
+          />
+        }
+      >
+        <Icon className={cn("size-3.5", intent === "submitted" && "animate-soft-pulse")} aria-hidden="true" />
+        {STATUS_LABEL[intent]}
+      </TooltipTrigger>
+      <TooltipContent>{DESCRIPTION[intent]}</TooltipContent>
+    </Tooltip>
   );
 }

@@ -10,6 +10,7 @@ import { ErrorState } from "@/components/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 import { cn } from "@/lib/utils";
 import type { Status } from "@/lib/pr";
 
@@ -33,7 +34,15 @@ export default function RequisitionsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Requisitions</h1>
+        <div className="flex items-baseline gap-2">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Requisitions</h1>
+          {query.isSuccess && (
+            <span className="font-mono text-sm tabular-nums text-muted-foreground">
+              <AnimatedNumber value={query.data.value.length} />{" "}
+              {query.data.value.length === 1 ? "result" : "results"}
+            </span>
+          )}
+        </div>
         <Button nativeButton={false} render={<Link href="/requisitions/new" />}>New requisition</Button>
       </div>
 
