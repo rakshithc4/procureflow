@@ -2,62 +2,40 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
+import { ShaderBackground } from "@/components/ui/shader-background";
 
-function FloatingPaths({ position }: { position: number }) {
-  const paths = Array.from({ length: 14 }, (_, i) => ({
-    id: i,
-    d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
-      380 - i * 5 * position
-    } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
-      152 - i * 5 * position
-    } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
-      684 - i * 5 * position
-    } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
-    width: 1 + i * 0.06,
-  }));
-
-  const reduceMotion = useReducedMotion();
-
-  return (
-    <div className="pointer-events-none absolute inset-0">
-      <svg className="h-full w-full text-white" viewBox="0 0 696 316" fill="none" aria-hidden="true">
-        {paths.map((path) => (
-          <motion.path
-            key={path.id}
-            d={path.d}
-            stroke="currentColor"
-            strokeWidth={path.width}
-            strokeOpacity={0.1 + path.id * 0.02}
-            pathLength={1}
-            initial={{ opacity: 0.35 }}
-            animate={reduceMotion ? { opacity: 0.4 } : { opacity: [0.22, 0.5, 0.22] }}
-            transition={
-              reduceMotion
-                ? { duration: 0 }
-                : { duration: 8 + (path.id % 4) * 2, repeat: Infinity, ease: "easeInOut" }
-            }
-          />
-        ))}
-      </svg>
-    </div>
-  );
-}
-
-// Signature hero treatment: animated flowing paths behind a big letter-in
+// Signature hero treatment: animated WebGL mesh backdrop behind a big letter-in
 // title, with real page content (e.g. the sign-in card) composed below via
 // `children` — this component only owns the backdrop, never form logic.
-export function BackgroundPaths({ title, children }: { title: string; children?: ReactNode }) {
+export function BackgroundPaths({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon?: ReactNode;
+  children?: ReactNode;
+}) {
   const words = title.split(" ");
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="relative flex min-h-[85vh] w-full flex-col items-center justify-center overflow-hidden px-4">
-      <div className="absolute inset-0">
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
+    <div className="relative flex min-h-[85vh] w-full flex-col items-center justify-center px-4">
+      <div className="fixed inset-0 -z-10">
+        <ShaderBackground className="h-full w-full" />
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
+        {icon && (
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-4"
+          >
+            {icon}
+          </motion.div>
+        )}
         <motion.h1
           initial={reduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}

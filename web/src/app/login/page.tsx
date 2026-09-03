@@ -3,11 +3,8 @@
 import { useState, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Package } from "lucide-react";
 import { BackgroundPaths } from "@/components/ui/background-paths";
-import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { DEMO_CREDENTIALS } from "@/auth";
 
 export default function LoginPage() {
@@ -32,52 +29,81 @@ export default function LoginPage() {
   }
 
   return (
-    <BackgroundPaths title="ProcureFlow">
-      <Card className="mx-auto w-full max-w-sm text-left">
-        <CardHeader className="text-center">
-          <CardDescription>Sign in to manage purchase requisitions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={onSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="username"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-              />
-            </div>
-            {error && <p className="text-sm text-status-rejected-fg">{error}</p>}
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Signing in…" : "Sign in"}
-            </Button>
-          </form>
+    <BackgroundPaths
+      title="ProcureFlow"
+      icon={
+        <span className="flex size-12 items-center justify-center rounded-xl bg-status-approved-fg text-[#0a0b10] shadow-[0_0_24px_-6px_var(--color-status-approved-fg)]">
+          <Package className="size-6" strokeWidth={2.25} aria-hidden="true" />
+        </span>
+      }
+    >
+      <div className="mx-auto w-full max-w-sm text-left">
+        <p className="mb-8 text-center text-sm text-muted-foreground">
+          Sign in to manage purchase requisitions
+        </p>
 
-          <div className="mt-6 rounded-lg border border-border bg-white/[0.03] p-3 text-xs text-muted-foreground">
-            <p className="mb-1.5 font-medium text-foreground">Demo credentials</p>
-            {DEMO_CREDENTIALS.map((cred) => (
-              <p key={cred.email} className="leading-relaxed">
-                {cred.label}: <span className="font-mono text-foreground/80">{cred.email}</span> /{" "}
-                <span className="font-mono text-foreground/80">{cred.password}</span>
-              </p>
-            ))}
+        <form onSubmit={onSubmit} className="flex flex-col gap-9">
+          <div className="group relative transition-transform duration-300 ease-out focus-within:translate-x-1.5">
+            <label
+              htmlFor="email"
+              className="mb-3 block font-mono text-[11px] tracking-[0.2em] text-muted-foreground uppercase"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="username"
+              className="peer w-full border-0 border-b border-border bg-transparent pb-3 text-lg text-foreground outline-none"
+            />
+            <span className="absolute bottom-0 left-0 h-px w-0 bg-status-approved-fg shadow-[0_0_12px_var(--color-status-approved-fg)] transition-all duration-500 ease-out peer-focus:w-full" />
           </div>
-        </CardContent>
-      </Card>
+
+          <div className="group relative transition-transform duration-300 ease-out focus-within:translate-x-1.5">
+            <label
+              htmlFor="password"
+              className="mb-3 block font-mono text-[11px] tracking-[0.2em] text-muted-foreground uppercase"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              className="peer w-full border-0 border-b border-border bg-transparent pb-3 text-lg text-foreground outline-none"
+            />
+            <span className="absolute bottom-0 left-0 h-px w-0 bg-status-approved-fg shadow-[0_0_12px_var(--color-status-approved-fg)] transition-all duration-500 ease-out peer-focus:w-full" />
+          </div>
+
+          {error && (
+            <p className="font-mono text-xs tracking-wide text-status-rejected-fg uppercase">{error}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-2 w-full rounded-full bg-foreground py-4 text-sm font-extrabold tracking-[0.15em] text-background uppercase transition-all duration-300 hover:tracking-[0.3em] disabled:pointer-events-none disabled:opacity-50"
+          >
+            {loading ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+
+        <div className="mt-10 border-t border-border pt-6 font-mono text-[11px] tracking-wide text-muted-foreground">
+          <p className="mb-2 uppercase">Demo credentials</p>
+          {DEMO_CREDENTIALS.map((cred) => (
+            <p key={cred.email} className="leading-relaxed">
+              {cred.label}: <span className="text-foreground/80">{cred.email}</span> /{" "}
+              <span className="text-foreground/80">{cred.password}</span>
+            </p>
+          ))}
+        </div>
+      </div>
     </BackgroundPaths>
   );
 }
