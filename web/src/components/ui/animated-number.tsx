@@ -1,10 +1,10 @@
 "use client"
 
 // Trimmed from Skiper UI's skiper37 ("Animated number") — a count-up that
-// runs once when it scrolls into view, built on NumberFlow + framer-motion.
+// runs once when it scrolls into view, built on NumberFlow + Motion.
 // https://skiper-ui.com — free component, attribution per its license.
 import { useRef, useState } from "react"
-import { motion, useReducedMotion, type Variants } from "framer-motion"
+import { motion, useReducedMotion, type Variants } from "motion/react"
 import NumberFlow from "@number-flow/react"
 
 export function AnimatedNumber({

@@ -4,7 +4,7 @@
 // circular scroll-position indicator, fixed to the corner of the viewport.
 // https://skiper-ui.com — free component, attribution per its license.
 import { useState } from "react"
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion"
+import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "motion/react"
 import NumberFlow from "@number-flow/react"
 
 const RADIUS = 18

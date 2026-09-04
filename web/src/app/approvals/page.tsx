@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 import { api, ApiError } from "@/lib/api-client";
 import { StatusBadge } from "@/components/status-badge";
 import { RejectDialog } from "@/components/reject-dialog";
@@ -12,6 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
 import { AnimatedNumber } from "@/components/ui/animated-number";
+
+const MotionRow = motion.create(TableRow);
 
 // US5 AC1: approver-only queue of SUBMITTED requisitions with one-click actions.
 export default function ApprovalsPage() {
@@ -77,36 +80,45 @@ export default function ApprovalsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {query.data.value.map((pr) => (
-              <TableRow key={pr.ReqId}>
-                <TableCell className="font-medium text-foreground">
-                  <Link href={`/requisitions/${pr.ReqId}`} className="transition-colors hover:text-primary">
-                    {pr.Title}
-                  </Link>
-                </TableCell>
-                <TableCell className="font-mono tabular-nums text-muted-foreground">
-                  {pr.Amount} {pr.Currency}
-                </TableCell>
-                <TableCell>
-                  <StatusBadge status={pr.Status} />
-                </TableCell>
-                <TableCell className="text-muted-foreground">{pr.RequestorId}</TableCell>
-                <TableCell className="flex justify-end gap-2">
-                  <Button
-                    size="sm"
-                    disabled={approveMutation.isPending}
-                    onClick={() => approveMutation.mutate(pr.ReqId)}
-                  >
-                    Approve
-                  </Button>
-                  <RejectDialog
-                    size="sm"
-                    disabled={rejectMutation.isPending}
-                    onReject={(note) => rejectMutation.mutate({ id: pr.ReqId, note })}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+            <AnimatePresence initial={false} mode="popLayout">
+              {query.data.value.map((pr) => (
+                <MotionRow
+                  key={pr.ReqId}
+                  layout
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: 24, transition: { duration: 0.18, ease: "easeIn" } }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                >
+                  <TableCell className="font-medium text-foreground">
+                    <Link href={`/requisitions/${pr.ReqId}`} className="transition-colors hover:text-primary">
+                      {pr.Title}
+                    </Link>
+                  </TableCell>
+                  <TableCell className="font-mono tabular-nums text-muted-foreground">
+                    {pr.Amount} {pr.Currency}
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge status={pr.Status} />
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{pr.RequestorId}</TableCell>
+                  <TableCell className="flex justify-end gap-2">
+                    <Button
+                      size="sm"
+                      disabled={approveMutation.isPending}
+                      onClick={() => approveMutation.mutate(pr.ReqId)}
+                    >
+                      Approve
+                    </Button>
+                    <RejectDialog
+                      size="sm"
+                      disabled={rejectMutation.isPending}
+                      onReject={(note) => rejectMutation.mutate({ id: pr.ReqId, note })}
+                    />
+                  </TableCell>
+                </MotionRow>
+              ))}
+            </AnimatePresence>
           </TableBody>
         </Table>
       )}

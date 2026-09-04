@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "motion/react";
 import { api } from "@/lib/api-client";
 import { PrTable } from "@/components/pr-table";
 import { EmptyState } from "@/components/empty-state";
@@ -55,13 +56,20 @@ export default function RequisitionsPage() {
               onClick={() => setStatus(chip.value)}
               aria-pressed={status === chip.value}
               className={cn(
-                "rounded-full border px-3 py-1 text-sm font-medium transition-colors duration-150",
+                "relative rounded-full border px-3 py-1 text-sm font-medium transition-colors duration-150",
                 status === chip.value
-                  ? "border-primary/50 bg-primary/15 text-primary"
+                  ? "border-primary/50 text-primary"
                   : "border-border text-muted-foreground hover:bg-accent hover:text-foreground",
               )}
             >
-              {chip.label}
+              {status === chip.value && (
+                <motion.span
+                  layoutId="status-chip-active"
+                  className="absolute inset-0 rounded-full bg-primary/15"
+                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                />
+              )}
+              <span className="relative">{chip.label}</span>
             </button>
           ))}
         </div>

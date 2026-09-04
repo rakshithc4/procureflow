@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { CheckCircle2, CircleDashed, Clock, XCircle } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { PrTable } from "@/components/pr-table";
