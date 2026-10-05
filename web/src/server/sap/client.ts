@@ -76,6 +76,7 @@ export interface SapRequestInit {
 }
 
 export async function sapFetch(path: string, init: SapRequestInit = {}): Promise<unknown> {
+  await ensureMockServer();
   const method = init.method ?? "GET";
   const isModifying = MODIFYING_METHODS.has(method);
 
