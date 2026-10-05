@@ -36,6 +36,7 @@ async function handle(req: NextRequest, path: string[], method: Method) {
     if (err instanceof SapError) {
       return NextResponse.json({ status: err.status, code: err.code, message: err.message }, { status: err.status });
     }
+    console.error("SAP proxy failed:", err);
     return NextResponse.json(
       { status: 502, code: "UPSTREAM_ERROR", message: "Unexpected error contacting SAP" },
       { status: 502 },
