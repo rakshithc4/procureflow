@@ -1,4 +1,15 @@
 import { getEnv } from "@/env";
+// Hosted mock mode: the Next.js instrumentation hook doesn't reliably run on
+// Vercel, so start the MSW mock SAP server lazily on first use instead.
+let mockStart: Promise<void> | null = null;
+function ensureMockServer(): Promise<void> {
+  if (process.env.MOCK_SAP !== "1") return Promise.resolve();
+  mockStart ??= import("@/mocks/node").then(({ server }) => {
+    server.listen({ onUnhandledRequest: "bypass" });
+    console.log("[sap-client] mock SAP server started");
+  });
+  return mockStart;
+}
 
 export class SapError extends Error {
   status: number;
@@ -108,6 +119,7 @@ export async function sapFetch(path: string, init: SapRequestInit = {}): Promise
 }
 
 async function sapFetchOnce(path: string, init: SapRequestInit): Promise<unknown> {
+  await ensureMockServer();
   const method = init.method ?? "GET";
   const isModifying = MODIFYING_METHODS.has(method);
   const signal = AbortSignal.timeout(timeoutMs());

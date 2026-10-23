@@ -76,6 +76,7 @@ async function handle(req: NextRequest, path: string[], method: Method) {
         false,
       );
     }
+    console.error("SAP proxy failed:", err);
     return respond(
       NextResponse.json(
         { status: 502, code: "UPSTREAM_ERROR", message: "Unexpected error contacting SAP" },
