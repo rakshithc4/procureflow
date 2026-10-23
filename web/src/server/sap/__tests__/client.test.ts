@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { delay, http, HttpResponse } from "msw";
 import { server } from "@/mocks/node";
 import { resetMockDb } from "@/mocks/db";
 import { resetSapClientCache, sapFetch, SapError } from "../client";
@@ -61,5 +62,58 @@ describe("sapFetch", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(SapError);
     }
+  });
+});
+
+describe("sapFetch availability classification", () => {
+  const SAP = /zprocurement_srv\/0001\/PurchaseRequisition/;
+
+  afterEach(() => {
+    delete process.env.SAP_TIMEOUT_MS;
+  });
+
+  it("flags a network failure as unavailable", async () => {
+    server.use(http.get(SAP, () => HttpResponse.error()));
+    await expect(sapFetch("PurchaseRequisition")).rejects.toMatchObject({
+      unavailable: true,
+      code: "SAP_UNREACHABLE",
+    });
+  });
+
+  it("flags a gateway 503 with a non-OData body as unavailable", async () => {
+    server.use(http.get(SAP, () => HttpResponse.text("<html>Service Unavailable</html>", { status: 503 })));
+    await expect(sapFetch("PurchaseRequisition")).rejects.toMatchObject({ status: 503, unavailable: true });
+  });
+
+  it("flags a non-OData error body (e.g. a 404 from a stopped system) as unavailable", async () => {
+    server.use(http.get(SAP, () => HttpResponse.text("Not Found", { status: 404 })));
+    await expect(sapFetch("PurchaseRequisition")).rejects.toMatchObject({ unavailable: true });
+  });
+
+  it("flags a timeout as unavailable", async () => {
+    process.env.SAP_TIMEOUT_MS = "50";
+    server.use(
+      http.get(SAP, async () => {
+        await delay("infinite");
+        return HttpResponse.json({});
+      }),
+    );
+    await expect(sapFetch("PurchaseRequisition")).rejects.toMatchObject({
+      unavailable: true,
+      code: "SAP_TIMEOUT",
+    });
+  });
+
+  it("does NOT flag an OData business error as unavailable", async () => {
+    await expect(
+      sapFetch("PurchaseRequisition", { method: "POST", body: { Title: "", Amount: "0", Currency: "" } }),
+    ).rejects.toMatchObject({ status: 400, unavailable: false });
+  });
+
+  it("does NOT flag an OData 404 (entity not found) as unavailable", async () => {
+    await expect(sapFetch("PurchaseRequisition(ReqId=does-not-exist)")).rejects.toMatchObject({
+      status: 404,
+      unavailable: false,
+    });
   });
 });
