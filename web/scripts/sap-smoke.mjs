@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Live smoke test against a real SAP BTP ABAP Environment instance.
-// Run: node scripts/sap-smoke.mjs   (reads web/.env — see .env.example)
+// Run: node scripts/sap-smoke.mjs   (reads web/.env.local, then web/.env — see .env.example)
 // Covers the full API contract: create, submit, approve, create PO.
 
 import { fetch } from 'undici';
@@ -9,7 +9,6 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const envPath = path.join(__dirname, '..', '.env');
 
 function loadEnv(file) {
   if (!existsSync(file)) return;
@@ -22,7 +21,9 @@ function loadEnv(file) {
     if (!(key in process.env)) process.env[key] = value;
   }
 }
-loadEnv(envPath);
+// First file loaded wins (same precedence as Next.js: .env.local over .env).
+loadEnv(path.join(__dirname, '..', '.env.local'));
+loadEnv(path.join(__dirname, '..', '.env'));
 
 const BASE_URL = process.env.SAP_BASE_URL;
 const SERVICE_PATH = process.env.SAP_SERVICE_PATH;
@@ -30,7 +31,7 @@ const USER = process.env.SAP_USER;
 const PASS = process.env.SAP_PASS;
 
 if (!BASE_URL || !SERVICE_PATH || !USER || !PASS) {
-  console.error('Missing SAP_BASE_URL / SAP_SERVICE_PATH / SAP_USER / SAP_PASS in web/.env');
+  console.error('Missing SAP_BASE_URL / SAP_SERVICE_PATH / SAP_USER / SAP_PASS (set them in web/.env.local)');
   process.exit(1);
 }
 

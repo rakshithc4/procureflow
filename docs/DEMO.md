@@ -1,14 +1,16 @@
 # Demo script (3 minutes)
 
 Mock mode works for this entire script with no live SAP connection
-(`MOCK_SAP=1`); swap to a live URL for the real-SAP version once Phase 5 is
-verified.
+(`MOCK_SAP=1`). The deployed site falls back to the same demo data when the
+SAP trial system is asleep — a banner says so ("SAP backend asleep (trial
+system) — showing demo data.") — so this script works whether or not the
+backend is running.
 
 ## 1. Login (15s)
-Open `/login`. Point out the demo credentials on the card — no external
-IdP, two seeded roles (requestor, approver). Sign in as **approver@demo**
-(approver can do everything requestor can, plus approve/reject/create PO —
-lets the whole flow run from one account).
+Open `/login`. Point out the one-click persona cards and the demo credentials
+under them — no external IdP, two seeded roles (requestor, approver). Click
+**Try as Approver** (approver can do everything requestor can, plus
+approve/reject/create PO — lets the whole flow run from one account).
 
 ## 2. Dashboard (20s)
 Land on `/`. Four status metric cards, recent-5 table. Point out the status
@@ -43,7 +45,7 @@ queue row.
 
 ## 7. Wrap-up (10s)
 Mention: SAP RAP managed business object on BTP ABAP Environment as the
-system of record (4 custom actions, 6 ABAP Unit tests, ATC-clean), Next.js
+system of record (4 custom actions, 6 ABAP Unit tests), Next.js
 proxy pattern hiding all SAP credentials from the browser, full test suite
 (Vitest unit/integration + Playwright e2e incl. an axe-core accessibility
 sweep on every route).
@@ -54,8 +56,8 @@ sweep on every route).
 
 - Built an end-to-end SAP procurement product: a RAP managed business object
   with 4 custom actions and 6 ABAP Unit tests on SAP BTP ABAP Environment,
-  consumed by a Next.js 16 app (6 routes, 16 Playwright specs including a
-  full accessibility sweep, 48 unit/integration tests) with a server-side
+  consumed by a Next.js 16 app (6 routes, 21 Playwright tests including a
+  full accessibility sweep, 65 unit/integration tests) with a server-side
   proxy that centralizes SAP OData v4 CSRF/session handling.
 - Designed a role×status permission matrix as the single source of truth
   for UI action-gating (zero inline role checks), driving a data table,

@@ -23,6 +23,15 @@ export default defineConfig({
     command: "pnpm dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
-    env: { NEXTAUTH_SECRET: "test-secret-for-e2e-mock-mode-only", MOCK_SAP: "1" },
+    env: {
+      NEXTAUTH_SECRET: "test-secret-for-e2e-mock-mode-only",
+      MOCK_SAP: "1",
+      // Placeholders (MSW intercepts by path, never the host) so e2e doesn't
+      // depend on a developer's local .env.local.
+      SAP_BASE_URL: "https://mock-sap.example.com",
+      SAP_SERVICE_PATH: "/sap/opu/odata4/sap/zui_procurement_o4/srvd/sap/zprocurement_srv/0001/",
+      SAP_USER: "MOCK_USER",
+      SAP_PASS: "mock-pass",
+    },
   },
 });

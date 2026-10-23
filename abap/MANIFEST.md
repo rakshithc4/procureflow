@@ -28,4 +28,4 @@ Package: `ZPROCUREMENT_WF`, superpackage `ZLOCAL`, transport: local.
 1. Recreate package `ZPROCUREMENT_WF` as above.
 2. Paste + activate objects 1–17 in table order.
 3. Create service binding (object 18), publish, re-run Communication Scenario / User / Arrangement steps in `docs/REDEPLOY.md`.
-4. Re-paste the resulting service URL into `web/.env`.
+4. Re-paste the resulting service URL into `web/.env.local`.
