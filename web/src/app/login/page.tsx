@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Package } from "lucide-react";
+import { Package, ShieldCheck, UserRound } from "lucide-react";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import { DEMO_CREDENTIALS } from "@/auth";
 
@@ -14,11 +14,10 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
+  async function signInWith(emailValue: string, passwordValue: string) {
     setError(null);
     setLoading(true);
-    const result = await signIn("credentials", { email, password, redirect: false });
+    const result = await signIn("credentials", { email: emailValue, password: passwordValue, redirect: false });
     setLoading(false);
     if (result?.error) {
       setError("Invalid email or password");
@@ -26,6 +25,11 @@ export default function LoginPage() {
     }
     router.push("/");
     router.refresh();
+  }
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    return signInWith(email, password);
   }
 
   return (
@@ -94,14 +98,35 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-10 border-t border-border pt-6 font-mono text-[11px] tracking-wide text-muted-foreground">
-          <p className="mb-2 uppercase">Demo credentials</p>
-          {DEMO_CREDENTIALS.map((cred) => (
-            <p key={cred.email} className="leading-relaxed">
-              {cred.label}: <span className="text-foreground/80">{cred.email}</span> /{" "}
-              <span className="text-foreground/80">{cred.password}</span>
-            </p>
-          ))}
+        <div className="mt-10 border-t border-border pt-6">
+          <p className="mb-3 font-mono text-[11px] tracking-wide text-muted-foreground uppercase">Demo credentials</p>
+          <div className="grid gap-3">
+            {DEMO_CREDENTIALS.map((cred) => {
+              const Icon = cred.label === "Approver" ? ShieldCheck : UserRound;
+              return (
+                <button
+                  key={cred.email}
+                  type="button"
+                  disabled={loading}
+                  onClick={() => signInWith(cred.email, cred.password)}
+                  className="group flex flex-col gap-1.5 rounded-xl border border-border bg-card/40 p-3 text-left transition-colors duration-200 hover:border-status-approved-fg/40 hover:bg-card/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-status-approved-fg disabled:pointer-events-none disabled:opacity-50"
+                >
+                  <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <Icon className="size-4 text-status-approved-fg" aria-hidden="true" />
+                    Try as {cred.label}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {cred.label === "Approver"
+                      ? "Approve, reject, and create purchase orders"
+                      : "Create and submit requisitions"}
+                  </span>
+                  <span className="font-mono text-[11px] text-foreground/70">
+                    {cred.email} / {cred.password}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </BackgroundPaths>

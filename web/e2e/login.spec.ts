@@ -34,4 +34,19 @@ test.describe("Login (US6 — trust the system)", () => {
     await expect(page).toHaveURL("/");
     await expect(page.getByRole("link", { name: "Approvals" })).toHaveCount(0);
   });
+
+  test("one-click persona: Try as Approver signs in with the Approvals link", async ({ page }) => {
+    await page.goto("/login");
+    await page.getByRole("button", { name: /Try as Approver/ }).click();
+    await expect(page).toHaveURL("/");
+    await expect(page.getByRole("link", { name: "Approvals" })).toBeVisible();
+  });
+
+  test("one-click persona: Try as Requestor signs in without the Approvals link", async ({ page }) => {
+    await page.goto("/login");
+    await page.getByRole("button", { name: /Try as Requestor/ }).click();
+    await expect(page).toHaveURL("/");
+    await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Approvals" })).toHaveCount(0);
+  });
 });

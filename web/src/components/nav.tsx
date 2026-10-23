@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DemoBanner } from "@/components/demo-banner";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { cn } from "@/lib/utils";
 
@@ -77,6 +78,7 @@ export function Nav() {
             </div>
           )}
         </div>
+        <DemoBanner />
       </header>
     </>
   );

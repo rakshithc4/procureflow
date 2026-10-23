@@ -2,11 +2,10 @@
 
 **Status: FUNCTIONALLY VERIFIED, paperwork incomplete.** All 18 objects were
 created and activated in ADT. ABAP Unit confirmed 6/6 green (screenshot
-reviewed live in a Claude Code session, ~2026-07-07 01:38 local time —
-`ztc_procurement`, all methods passing, durations 0.19s–1.35s). The
-screenshot itself was never saved into this repo (hit a sandbox file-access
-issue mid-session) — if you still have it, drop it in `docs/screenshots/`
-and reference it below.
+reviewed ~2026-07-07 01:38 local time — `ztc_procurement`, all methods
+passing, durations 0.19s–1.35s). The screenshot itself was never saved into
+this repo — if you still have it, drop it in `docs/screenshots/` and
+reference it below.
 
 ATC came back with: 2 errors (1 in `ZCL_DIAG_CREATE`, an object outside this
 repo — not something to fix here; 1 in `ZTC_PROCUREMENT` ~line 55, an

@@ -1,5 +1,6 @@
 import type { CreateRequisitionInput, ListQueryParams, PurchaseRequisition } from "@/lib/pr";
 import { listQuery, readQuery } from "@/lib/pr";
+import { markDemoMode } from "@/lib/demo-mode";
 
 const ACTION = "com.sap.gateway.srvd.zprocurement_srv.v0001";
 
@@ -19,6 +20,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
   });
+  // The proxy tags every response with which backend answered (live SAP or
+  // the demo fallback) so the UI can say so.
+  const mode = res.headers.get("x-procureflow-mode");
+  if (mode) markDemoMode(mode === "demo");
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new ApiError(body.status ?? res.status, body.code ?? "UNKNOWN", body.message ?? "Request failed");

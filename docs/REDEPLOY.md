@@ -22,11 +22,12 @@ first). For each row:
 1. Right-click the package → **New →** matching object type (Database Table,
    Data Definition, Behavior Definition, Class, Message Class, Service
    Definition).
-2. Paste the contents of the referenced `.txt` file as the object source
-   (skip the `""` comment header block — those lines are metadata for
-   humans, not valid syntax for every object type; for tables/CDS/behavior
-   definitions the `""` lines ARE valid ABAP comments and can be pasted
-   as-is).
+2. Paste the contents of the referenced `.txt` file as the object source,
+   as-is. The CDS/table/behavior/service sources deliberately contain no
+   leading comment block — ABAP DDL-based sources only accept `//` and
+   `/* */` comments, not the classic `"` style, and `"` headers fail
+   activation with "Unexpected character" errors. (Classes use ordinary
+   ABAP `"` comments, which are fine.)
 3. Activate (**Ctrl+F3**).
 4. Move to the next row only after the current one activates cleanly.
 
